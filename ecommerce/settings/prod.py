@@ -5,6 +5,9 @@ import dj_database_url
 DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 
+# Render handles SSL, so we need to tell Django to trust the X-Forwarded-Proto header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 DATABASES = {
     'default': dj_database_url.config(
         default=config('DATABASE_URL'),

@@ -3,7 +3,10 @@
 A fully-featured, Amazon-like multi-vendor e-commerce platform built with Django, HTMX, and Bootstrap 5.
 
 🌐 **Live Demo:** [https://multi-vendor-ecommerce.onrender.com](https://multi-vendor-ecommerce.onrender.com)
-*(Note: The live demo is hosted on Render. It may take a minute to wake up if the site has been inactive.)*
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+
+*(Note: Click the button above to deploy your own live version.)*
 
 ## 🚀 Features
 
