@@ -2,8 +2,8 @@
 
 A fully-featured, Amazon-like multi-vendor e-commerce platform built with Django, HTMX, and Bootstrap 5.
 
-🌐 **Live Demo:** [https://small-clowns-marry.loca.lt](https://small-clowns-marry.loca.lt)
-*(Note: If prompted by Localtunnel, click "Click to Continue" to view the site.)*
+🌐 **Live Demo:** [https://multi-vendor-ecommerce.onrender.com](https://multi-vendor-ecommerce.onrender.com)
+*(Note: The live demo is hosted on Render. It may take a minute to wake up if the site has been inactive.)*
 
 ## 🚀 Features
 
@@ -62,4 +62,3 @@ Access the application at `http://localhost:8000`.
 
 ---
 *Built as a high-performance, scaleable marketplace demonstration.*
-Local tunnel Password : 103.112.212.150
