@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mt-2 small">
+            <li class="breadcrumb-item"><a href="/accounts/profile/" class="text-decoration-none">Your Account</a></li>
+            <li class="breadcrumb-item"><a href="/orders/" class="text-decoration-none">Your Orders</a></li>
+            <li class="breadcrumb-item active">Order Details</li>
+        </ol>
+    </nav>
+
+    <h2 class="fw-bold mb-4">Order Details</h2>
+    
+    <div class="d-flex align-items-center small text-muted mb-3">
+        <span class="me-3">Ordered on {{ order.created_at|date:"d F Y" }}</span>
+        <span>|</span>
+        <span class="ms-3">Order# {{ order.id }}</span>
+    </div>
+
+    <div class="card shadow-sm border-secondary mb-4 rounded">
+        <div class="card-body p-4 row">
+            <div class="col-md-4">
+                <h6 class="fw-bold">Shipping Address</h6>
+                <p class="small text-dark mb-0">{{ user.first_name }} {{ user.last_name }}</p>
+                <p class="small text-muted">{{ order.shipping_address }}</p>
+                <p class="small text-muted mb-0">Phone: {{ order.phone_number }}</p>
+            </div>
+            <div class="col-md-4 border-start">
+                <h6 class="fw-bold">Payment Method</h6>
+                <p class="small text-dark mb-0"><i class="bi bi-credit-card-fill text-muted me-1"></i>Card</p>
+            </div>
+            <div class="col-md-4 border-start">
+                <h6 class="fw-bold">Order Summary</h6>
+                <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Item(s) Subtotal:</span>
+                    <span>₹{{ order.total_amount|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Shipping:</span>
+                    <span>₹0.00</span>
+                </div>
+                <div class="d-flex justify-content-between fw-bold text-dark mt-2 pt-2 border-top">
+                    <span>Grand Total:</span>
+                    <span>₹{{ order.total_amount|floatformat:2 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm border-0 mb-4 rounded">
+        <div class="card-body p-4">
+            <h4 class="fw-bold text-success mb-3">
+                {% if order.status == 'pending' %}
+                    Arriving soon
+                {% elif order.status == 'shipped' %}
+                    Shipped
+                {% elif order.status == 'delivered' %}
+                    Delivered
+                {% else %}
+                    {{ order.status|title }}
+                {% endif %}
+            </h4>
+            
+            {% for item in order.items.all %}
+                <div class="row mb-3">
+                    <div class="col-md-2 col-3">
+                        <a href="/products/{{ item.product.slug }}/">
+                            {% if item.product.primary_image %}
+                                <img src="{{ item.product.primary_image.image.url }}" class="img-fluid rounded border p-1" style="max-height: 100px; object-fit: contain;">
+                            {% else %}
+                                <div class="bg-light d-flex align-items-center justify-content-center h-100 rounded border">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="col-md-7 col-9">
+                        <a href="/products/{{ item.product.slug }}/" class="text-decoration-none">
+                            <h6 class="fw-bold fs-6 text-primary hover-warning mb-1">{{ item.product_name }}</h6>
+                        </a>
+                        <p class="small text-muted mb-1">Sold by: <a href="#" class="text-decoration-none">{{ item.seller.business_name }}</a></p>
+                        <p class="small fw-bold text-dark mb-1">₹{{ item.product_price|floatformat:2 }}</p>
+                        <div class="mt-3">
+                            <button class="btn btn-warning btn-sm rounded-pill px-3 shadow-sm py-1 fw-bold">Buy it again</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-secondary btn-sm shadow-sm">Write a product review</button>
+                            <button class="btn btn-outline-secondary btn-sm shadow-sm">Return or replace items</button>
+                        </div>
+                    </div>
+                </div>
+                {% if not forloop.last %}<hr class="text-muted opacity-25">{% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% if order.tracking_history.exists %}
+        <div class="card shadow-sm border-0 mb-4 rounded">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Tracking History</h6>
+                <div class="timeline ps-3 border-start border-2 border-primary small">
+                    {% for tracking in order.tracking_history.all|dictsortreversed:"timestamp" %}
+                        <div class="position-relative mb-3">
+                            <span class="position-absolute translate-middle p-1 bg-primary border border-light rounded-circle" style="left: -17px; top: 10px;"></span>
+                            <div class="mb-1 text-dark fw-bold">{{ tracking.status|title }}</div>
+                            <div class="text-muted">{{ tracking.note }}</div>
+                            <div class="text-muted" style="font-size: 0.8rem;">{{ tracking.timestamp|date:"d M, H:i" }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

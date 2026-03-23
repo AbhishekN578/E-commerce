@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row pt-2">
+        <!-- Checkout Form -->
+        <div class="col-md-8 mb-4">
+            <h2 class="fw-bold mb-4">Checkout</h2>
+            
+            <div class="card shadow-sm border-0 mb-4 p-4">
+                <h4 class="fw-bold mb-3">1. Shipping address</h4>
+                
+                <form method="POST" id="checkout-form">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="first_name" class="form-label fw-bold small">First name</label>
+                            <input type="text" class="form-control" id="first_name" value="{{ user.first_name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="last_name" class="form-label fw-bold small">Last name</label>
+                            <input type="text" class="form-control" id="last_name" value="{{ user.last_name }}" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="shipping_address" class="form-label fw-bold small">Address</label>
+                            <input type="text" class="form-control" id="shipping_address" name="shipping_address" placeholder="123 Main St, Apartment, studio, or floor" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="city" class="form-label fw-bold small">City</label>
+                            <input type="text" class="form-control" id="city" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="state" class="form-label fw-bold small">State</label>
+                            <select id="state" class="form-select" required>
+                                <option selected>Choose...</option>
+                                <option>Delhi</option>
+                                <option>Maharashtra</option>
+                                <option>Karnataka</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="zip" class="form-label fw-bold small">Zip</label>
+                            <input type="text" class="form-control" id="zip" required>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <label for="phone_number" class="form-label fw-bold small">Phone Number</label>
+                            <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="10-digit mobile number" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="card shadow-sm border-0 p-4 opacity-75">
+                <h4 class="fw-bold mb-3 text-muted">2. Payment method <i class="bi bi-lock-fill float-end fs-5"></i></h4>
+                <p class="small text-muted mb-0">You will be redirected to Stripe to securely complete your purchase.</p>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-4 sticky-top" style="top: 80px;">
+                <button type="submit" form="checkout-form" class="btn btn-warning w-100 rounded-pill mb-3 fw-bold">Place your order</button>
+                <div class="text-center small text-muted mb-3">By placing your order, you agree to AmazonClone's <a href="#">privacy notice</a> and <a href="#">conditions of use</a>.</div>
+                
+                <h5 class="fw-bold border-bottom pb-2 mb-3">Order Summary</h5>
+                <div class="d-flex justify-content-between small mb-2">
+                    <span>Items ({{ cart.items.count }}):</span>
+                    <span>₹{{ cart.total_amount|floatformat:0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between small mb-2">
+                    <span>Delivery:</span>
+                    <span>₹0.00</span>
+                </div>
+                
+                <div class="d-flex justify-content-between fw-bold fs-5 text-danger border-top pt-2 mt-3">
+                    <span>Order Total:</span>
+                    <span>₹{{ cart.total_amount|floatformat:0 }}</span>
+                </div>
+            </div>
+            
+            <div class="mt-4 p-3 bg-light rounded text-muted small">
+                <h6 class="fw-bold"><i class="bi bi-shield-lock-fill text-success me-1"></i>Secure checkout</h6>
+                <p class="mb-0">Your payment details are protected by Stripe's bank-level security.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

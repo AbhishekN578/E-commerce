@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mt-2 small">
+            <li class="breadcrumb-item"><a href="/accounts/profile/" class="text-decoration-none">Your Account</a></li>
+            <li class="breadcrumb-item active">Your Orders</li>
+        </ol>
+    </nav>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Your Orders</h2>
+        <div class="input-group" style="width: 300px;">
+            <input type="text" class="form-control form-control-sm border-secondary shadow-sm" placeholder="Search all orders">
+            <button class="btn btn-dark btn-sm shadow-sm" type="button">Search Orders</button>
+        </div>
+    </div>
+    
+    <ul class="nav nav-tabs border-bottom mb-4">
+        <li class="nav-item">
+            <a class="nav-link active fw-bold text-dark border-bottom-0 border-dark" href="#">Orders</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-primary" href="#">Not Yet Shipped</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-primary" href="#">Cancelled Orders</a>
+        </li>
+    </ul>
+
+    {% if orders %}
+        {% for order in orders %}
+            <div class="card shadow-sm border-secondary mb-4 rounded-3 overflow-hidden">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-3 border-bottom-0 small">
+                    <div class="d-flex w-50 justify-content-between">
+                        <div>
+                            <span class="text-muted d-block text-uppercase">Order Placed</span>
+                            <span class="text-dark">{{ order.created_at|date:"d F Y" }}</span>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block text-uppercase">Total</span>
+                            <span class="text-dark">₹{{ order.total_amount|floatformat:2 }}</span>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block text-uppercase">Ship To</span>
+                            <span class="text-primary btn-link text-decoration-none dropdown-toggle cursor-pointer">{{ order.shipping_address|truncatechars:15 }}</span>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <span class="text-muted d-block text-uppercase">Order # {{ order.id }}</span>
+                        <a href="/orders/{{ order.id }}/" class="text-primary text-decoration-none">View order details</a> <span class="text-muted px-1">|</span> <a href="#" class="text-primary text-decoration-none">Invoice</a>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">
+                        {% if order.status == 'pending' %}
+                            Processing
+                        {% elif order.status == 'shipped' %}
+                            <span class="text-success">Shipped</span>
+                        {% elif order.status == 'delivered' %}
+                            <span class="text-success">Delivered</span>
+                        {% else %}
+                            {{ order.status|title }}
+                        {% endif %}
+                    </h5>
+                    
+                    {% for item in order.items.all %}
+                        <div class="row mb-3">
+                            <div class="col-md-2 col-3">
+                                <a href="/products/{{ item.product.slug }}/">
+                                    {% if item.product.primary_image %}
+                                        <img src="{{ item.product.primary_image.image.url }}" class="img-fluid rounded border p-1" style="max-height: 100px; object-fit: contain;">
+                                    {% else %}
+                                        <div class="bg-light d-flex align-items-center justify-content-center h-100 rounded border">
+                                            <i class="bi bi-image text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="col-md-7 col-9">
+                                <a href="/products/{{ item.product.slug }}/" class="text-decoration-none">
+                                    <h6 class="fw-bold fs-6 text-primary hover-warning mb-1">{{ item.product_name }}</h6>
+                                </a>
+                                <p class="small text-muted mb-1">Return window closed</p>
+                                <div class="mt-2 text-warning small">
+                                    <button class="btn btn-warning btn-sm rounded-pill px-3 shadow-sm py-1 fw-bold mb-2">Buy it again</button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm shadow-sm">Track package</button>
+                                    <button class="btn btn-outline-secondary btn-sm shadow-sm">Write a product review</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% if not forloop.last %}<hr class="text-muted opacity-25">{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5 mb-5 border rounded bg-white shadow-sm">
+            <h5 class="fw-bold text-dark">You have no orders.</h5>
+            <p class="text-muted">Start shopping to see your orders here.</p>
+            <a href="/" class="btn btn-warning rounded-pill mt-3 px-4 shadow-sm">Continue Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

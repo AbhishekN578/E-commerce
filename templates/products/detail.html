@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container bg-white p-4 pb-5 rounded shadow-sm mt-4 mb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a href="/products/?category={{ product.category.slug }}" class="text-decoration-none">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name|truncatechars:30 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row pt-3">
+        <!-- Image Gallery -->
+        <div class="col-md-5 text-center">
+            <div class="position-sticky top-0 pt-3">
+                {% if product.primary_image %}
+                    <img src="{{ product.primary_image.image.url }}" alt="{{ product.name }}" class="img-fluid rounded border p-2" id="main-product-image" style="max-height: 500px; object-fit: contain; width: 100%;">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center border rounded" style="height: 400px;">
+                        <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="d-flex justify-content-center mt-3 gap-2 overflow-auto py-2">
+                    {% for file in product.images.all %}
+                        <img src="{{ file.image.url }}" alt="Thumbnail" class="img-thumbnail rounded outline-primary" style="width: 60px; height: 60px; object-fit: contain; cursor: pointer;" onclick="document.getElementById('main-product-image').src=this.src;">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Info -->
+        <div class="col-md-4 px-4">
+            <h3 class="fw-bold fs-4 lh-base">{{ product.name }}</h3>
+            <div class="d-flex align-items-center mb-1">
+                <a href="#" class="text-decoration-none small mr-2">Visit the {{ product.seller.business_name }} Store</a>
+            </div>
+            
+            <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                <div class="text-warning small me-2">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
+                </div>
+                <span class="text-primary small btn-link text-decoration-none cursor-pointer">
+                    {{ product.avg_rating|default:"0" }} ratings
+                </span>
+                <span class="mx-2 text-muted">|</span>
+                <span class="small text-muted">{{ product.view_count }} views</span>
+            </div>
+            
+            <div class="mb-3">
+                {% if product.discount_percent %}
+                    <div class="d-flex align-items-center mb-1">
+                        <span class="text-danger fs-3 me-2">-{{ product.discount_percent|floatformat:0 }}%</span>
+                        <span class="fs-4 fw-bold"> <sup class="fs-6">₹</sup>{{ product.effective_price|floatformat:0 }}</span>
+                    </div>
+                    <div class="small text-muted">
+                        M.R.P.: <span class="text-decoration-line-through">₹{{ product.price }}</span>
+                    </div>
+                {% else %}
+                    <span class="fs-4 fw-bold"><sup class="fs-6">₹</sup>{{ product.price|floatformat:0 }}</span>
+                {% endif %}
+                <p class="small text-muted mt-1">Inclusive of all taxes</p>
+            </div>
+            
+            <hr>
+            <h6 class="fw-bold mb-3 mt-4">About this item</h6>
+            <div class="small lh-lg text-dark ps-2 border-start border-3 border-warning">
+                {{ product.description|linebreaks }}
+            </div>
+        </div>
+        
+        <!-- Action Box (Add to Cart) -->
+        <div class="col-md-3">
+            <div class="card border border-dark rounded-3 shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3">₹{{ product.effective_price|floatformat:0 }}</h4>
+                    
+                    <p class="small mb-1"><a href="#" class="text-decoration-none">FREE delivery</a> <strong>Wednesday, March 27</strong>. Details</p>
+                    <p class="small text-success mb-3"><i class="bi bi-geo-alt me-1"></i>Deliver to {{ request.user.first_name|default:"India" }}</p>
+                    
+                    {% if product.stock > 0 %}
+                        <h5 class="text-success fw-bold fs-6 mb-3">In stock</h5>
+                        
+                        <form id="add-to-cart-form" action="/cart/add/{{ product.id }}/" method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label small fw-bold">Quantity:</label>
+                                <select class="form-select form-select-sm shadow-sm border-secondary w-50" id="quantity" name="quantity">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-warning w-100 rounded-pill py-2 shadow-sm mb-2 fw-semibold">Add to Cart</button>
+                            <button type="button" class="btn btn-secondary-action w-100 rounded-pill py-2 shadow-sm fw-semibold" style="background-color: #ffa41c;">Buy Now</button>
+                        </form>
+                    {% else %}
+                        <h5 class="text-danger fw-bold fs-6 mb-3">Currently unavailable.</h5>
+                        <p class="small text-muted">We don't know when or if this item will be back in stock.</p>
+                    {% endif %}
+                    
+                    <div class="small mt-3 pt-3 border-top">
+                        <div class="row mb-1 text-muted">
+                            <div class="col-5">Ships from</div>
+                            <div class="col-7 text-dark">{{ product.seller.business_name }}</div>
+                        </div>
+                        <div class="row text-muted">
+                            <div class="col-5">Sold by</div>
+                            <div class="col-7 text-dark">{{ product.seller.business_name }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

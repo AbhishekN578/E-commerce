@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-dark text-white p-3 mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h3 class="mb-0"><i class="bi bi-shop text-warning me-2"></i>Seller Central</h3>
+        <div>
+            {% if not profile.is_approved %}
+                <span class="badge bg-danger fs-6"><i class="bi bi-exclamation-circle me-1"></i>Account Pending Approval</span>
+            {% else %}
+                <span class="badge bg-success fs-6"><i class="bi bi-check-circle me-1"></i>Active</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="list-group list-group-flush rounded">
+                    <a href="/dashboard/seller/" class="list-group-item list-group-item-action active bg-dark border-dark">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard Home
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-box me-2"></i> Manage Inventory
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div><i class="bi bi-receipt me-2"></i> Manage Orders</div>
+                        <span class="badge bg-danger rounded-pill">{{ pending_orders }}</span>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-graph-up-arrow me-2"></i> Reports & Analytics
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-gear me-2"></i> Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Dashboard Content -->
+        <div class="col-md-9">
+            
+            {% if not profile.is_approved %}
+            <div class="alert alert-warning shadow-sm border-warning">
+                <h5 class="alert-heading fw-bold"><i class="bi bi-hourglass-split me-2"></i>Application Under Review</h5>
+                <p class="mb-0">Your seller account is currently being reviewed by our team. You must wait for approval before you can add products or connect your bank account.</p>
+            </div>
+            {% endif %}
+
+            <!-- Top Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm bg-primary text-white">
+                        <div class="card-body">
+                            <h6 class="text-white-50 text-uppercase fw-bold mb-3">Total Sales</h6>
+                            <h3 class="fw-bold mb-0">₹{{ profile.total_sales }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-dark" style="background-color: #f8f9fa;">
+                        <div class="card-body">
+                            <h6 class="text-muted text-uppercase fw-bold mb-3">Active Products</h6>
+                            <h3 class="fw-bold mb-0">{{ active_products }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-dark" style="background-color: #e9ecef;">
+                        <div class="card-body">
+                            <h6 class="text-muted text-uppercase fw-bold mb-3">Pending Orders</h6>
+                            <h3 class="fw-bold mb-0 text-danger">{{ pending_orders }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stripe Connect Section -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white pb-0 border-0">
+                    <h5 class="fw-bold">Payment Configuration</h5>
+                </div>
+                <div class="card-body">
+                    {% if profile.stripe_account_id %}
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Stripe Account Connected</h6>
+                                <p class="text-muted small mb-0">Account ID: {{ profile.stripe_account_id }}</p>
+                            </div>
+                        </div>
+                        <a href="/api/payments/connect/" class="btn btn-outline-secondary btn-sm">Manage Stripe Dashboard</a>
+                    {% else %}
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-exclamation-triangle-fill text-warning fs-4 me-2"></i>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Stripe Account Missing</h6>
+                                <p class="text-muted small mb-0">You must connect a Stripe account to receive payouts.</p>
+                            </div>
+                        </div>
+                        <a href="/api/payments/connect/" class="btn btn-primary btn-sm {% if not profile.is_approved %}disabled{% endif %}">Connect Bank Account</a>
+                        {% if not profile.is_approved %}
+                            <p class="text-danger small mt-2">Available after account approval.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center border-0">
+                    <h5 class="fw-bold mb-0">Recent Orders</h5>
+                    <a href="#" class="btn btn-sm btn-link text-decoration-none">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_orders %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light text-muted small text-uppercase">
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Date</th>
+                                        <th>Product</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in recent_orders %}
+                                    <tr>
+                                        <td>#{{ item.order.id }}</td>
+                                        <td class="small">{{ item.order.created_at|date:"M d, Y" }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                {% if item.product.primary_image %}
+                                                    <img src="{{ item.product.primary_image.image.url }}" width="40" height="40" class="object-fit-contain rounded me-2 border">
+                                                {% else %}
+                                                    <div class="bg-light rounded me-2 border d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                        <i class="bi bi-box text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <span class="text-truncate d-inline-block" style="max-width: 150px;">{{ item.product_name }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="fw-bold">₹{% widthratio item.price 1 item.quantity %}</td>
+                                        <td>
+                                            <span class="badge rounded-pill 
+                                                {% if item.status == 'pending' %}bg-warning text-dark
+                                                {% elif item.status == 'shipped' %}bg-primary
+                                                {% elif item.status == 'delivered' %}bg-success
+                                                {% else %}bg-secondary{% endif %}">
+                                                {{ item.status|title }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-secondary">Update</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-receipt fs-1 mb-2"></i>
+                            <h6>No orders yet</h6>
+                            <p class="small">When customers buy your products, they will appear here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

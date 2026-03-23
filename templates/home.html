@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-banner"></div>
+
+<div class="container-fluid px-4 content-overlay">
+    <div class="row g-4 mb-4">
+        <!-- Categories -->
+        <div class="col-md-3">
+            <div class="card h-100 p-3">
+                <h5 class="card-title fw-bold mb-3">Shop by Category</h5>
+                <div class="row g-2">
+                    <div class="col-6 text-center">
+                        <a href="/products/?category=electronics" class="text-decoration-none">
+                            <img src="https://m.media-amazon.com/images/I/41m9m8j23YL._AC_SY200_.jpg" class="img-fluid mb-2" style="height: 100px; object-fit: contain;">
+                            <br><span class="text-dark small">Electronics</span>
+                        </a>
+                    </div>
+                    <div class="col-6 text-center">
+                        <a href="/products/?category=fashion" class="text-decoration-none">
+                            <img src="https://m.media-amazon.com/images/I/71Y32K9-u2L._AC_UL320_.jpg" class="img-fluid mb-2" style="height: 100px; object-fit: contain;">
+                            <br><span class="text-dark small">Fashion</span>
+                        </a>
+                    </div>
+                    <div class="col-6 text-center">
+                        <a href="/products/?category=home" class="text-decoration-none">
+                            <img src="https://m.media-amazon.com/images/I/81xU92v4V-L._AC_UL320_.jpg" class="img-fluid mb-2" style="height: 100px; object-fit: contain;">
+                            <br><span class="text-dark small">Home</span>
+                        </a>
+                    </div>
+                    <div class="col-6 text-center">
+                        <a href="/products/?category=books" class="text-decoration-none">
+                            <img src="https://m.media-amazon.com/images/I/81A-qjE5cJL._AC_UY218_.jpg" class="img-fluid mb-2" style="height: 100px; object-fit: contain;">
+                            <br><span class="text-dark small">Books</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Welcome Card -->
+        <div class="col-md-3">
+            <div class="card h-100 p-3 bg-white">
+                {% if user.is_authenticated %}
+                    <h5 class="fw-bold">Welcome back, {{ user.first_name }}</h5>
+                    <p class="text-muted small">Check your latest orders and wishlist.</p>
+                    <a href="/orders/" class="btn btn-warning w-100 mb-2">My Orders</a>
+                    {% if user.role == 'seller' %}
+                        <a href="/dashboard/seller/" class="btn btn-secondary-action w-100">Seller Dashboard</a>
+                    {% endif %}
+                {% else %}
+                    <h5 class="fw-bold text-center">Sign in for the best experience</h5>
+                    <a href="/accounts/login/" class="btn btn-warning w-100 mt-3 mb-2">Sign in securely</a>
+                    <div class="text-center small">
+                        New to AmazonClone? <a href="/accounts/register/">Start here.</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Products Row -->
+    <div class="bg-white p-4 mb-4 section-card">
+        <h4 class="mb-4 d-flex align-items-center">
+            <span class="fw-bold">Discover Latest Products</span>
+            <a href="/products/" class="ms-3 fs-6 fw-normal link-primary text-decoration-none">Shop all</a>
+        </h4>
+        
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4" id="featured-products">
+            <!-- Loaded via HTMX or Django Template -->
+            <div class="text-center w-100 py-5 text-muted" hx-get="/api/products/html/" hx-trigger="load" hx-target="#featured-products" hx-swap="outerHTML">
+                <div class="spinner-border text-warning" role="status"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

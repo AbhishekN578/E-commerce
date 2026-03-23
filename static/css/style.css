@@ -1,0 +1,126 @@
+/* Override and custom styling to match Amazon's look and feel */
+:root {
+    --amz-dark: #131921;
+    --amz-dark-light: #232f3e;
+    --amz-yellow: #febd69;
+    --amz-orange: #f90;
+    --amz-blue: #007185;
+    --amz-link: #007185;
+    --amz-hover: #c45500;
+}
+
+body {
+    background-color: #eaeded; /* Amazon's distinct gray background */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.bg-dark {
+    background-color: var(--amz-dark) !important;
+}
+
+.btn-warning {
+    background-color: #ffd814;
+    border-color: #fcd200;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px 0 rgba(213,217,217,.5);
+}
+
+.btn-warning:hover {
+    background-color: #f7ca00;
+    border-color: #f2c200;
+}
+
+.btn-secondary-action {
+    background: #fff;
+    border: 1px solid #d5d9d9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px 0 rgba(213,217,217,.5);
+    color: #0f1111;
+}
+
+.btn-secondary-action:hover {
+    background: #f7fafa;
+}
+
+.text-warning {
+    color: var(--amz-orange) !important;
+}
+
+a {
+    color: var(--amz-link);
+}
+a:hover {
+    color: var(--amz-hover);
+}
+
+.hover-warning:hover {
+    box-shadow: 0 0 0 1px white;
+    border-radius: 2px;
+}
+
+.hover-white:hover {
+    color: white !important;
+    text-decoration: underline !important;
+}
+
+.card {
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.product-card {
+    transition: transform 0.2s;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.product-img-wrapper {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: white;
+}
+
+.product-img-wrapper img {
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Amazon style pricing */
+.price-symbol {
+    font-size: 0.75rem;
+    vertical-align: top;
+    position: relative;
+    top: 0.2rem;
+}
+
+.price-whole {
+    font-size: 1.75rem;
+    font-weight: 500;
+}
+
+.price-fraction {
+    font-size: 0.75rem;
+    vertical-align: top;
+    position: relative;
+    top: 0.2rem;
+}
+
+.hero-banner {
+    height: 350px;
+    background: linear-gradient(to bottom, transparent, #eaeded), url('https://m.media-amazon.com/images/I/71qid7QFWJL._SX3000_.jpg') center/cover;
+    margin-bottom: -150px;
+    z-index: 0;
+}
+
+.content-overlay {
+    position: relative;
+    z-index: 1;
+}
